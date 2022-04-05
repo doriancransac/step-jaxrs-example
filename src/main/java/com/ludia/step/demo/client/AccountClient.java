@@ -21,12 +21,12 @@ public class AccountClient {
         Response response = postEntity(account);
         Account returned = response.readEntity(Account.class);
 
-        checkDeletedAccountIntegrity(account, returned);
+        checkCreatedAccountIntegrity(account, returned);
 
         return account;
     }
 
-    private void checkDeletedAccountIntegrity(Account input, Account output) throws Exception {
+    private void checkCreatedAccountIntegrity(Account input, Account output) throws Exception {
         if (output == null || !input.getName().equals(output.getName())) {
             throw new Exception("Inconsistent account creation state: provided name=" + input.getName() + ", returned=" + output.getName());
         }
