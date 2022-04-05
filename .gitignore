@@ -1,0 +1,14 @@
+bin/
+target/
+.settings/
+*.class
+.classpath
+.project
+*.log
+djigger.settings
+*lastsession.xml
+agent.jar
+collector.jar
+.idea/
+*.iml
+dependency-reduced-pom.xml
