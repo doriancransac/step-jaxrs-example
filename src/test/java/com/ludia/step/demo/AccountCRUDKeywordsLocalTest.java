@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Category(E2ETest.class)
 public class AccountCRUDKeywordsLocalTest {
     //Env properties are global to all the test methods in here
     private static String serviceUriRoot = "http://localhost:30001";
@@ -39,7 +40,6 @@ public class AccountCRUDKeywordsLocalTest {
 
     //Multi-service Test sequence (could/should be run as a "Plan")
     @Test
-    @Category(E2ETest.class)
     public void Ordered000_FullAccountCycleKeywordTest() throws Exception{
         String inputName = "dorian";
         String inputPassword = "1234";
@@ -53,7 +53,6 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     @Test //Individual Creation keyword execution
-    @Category(E2ETest.class)
     public void Ordered001_AccountCreationKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
@@ -64,7 +63,6 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     @Test //Individual Read keyword execution
-    @Category(E2ETest.class)
     public void Ordered002_AccountReadingKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
@@ -75,7 +73,6 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     @Test //Individual Deletion keyword execution
-    @Category(E2ETest.class)
     public void Ordered003AccountDeletionKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
@@ -86,7 +83,6 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     @Test //Individual Clear keyword execution
-    @Category(E2ETest.class)
     public void Ordered004AccountDeletionKeywordTest() throws Exception{
         //This test case has no business input
         //Variable test case validation input
