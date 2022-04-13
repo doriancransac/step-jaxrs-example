@@ -5,7 +5,6 @@ import com.ludia.step.demo.model.Account;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class AccountClient {
@@ -42,6 +41,15 @@ public class AccountClient {
         //Only name matters here
         Account account = new Account(name, null, null);
         Response response = postEntity(account);
+        String returned = response.readEntity(String.class);
+
+        checkDeletedAccountIntegrity(returned);
+
+        return extractDeletionCount(returned);
+    }
+
+    public int clear() throws Exception {
+        Response response =  getEntity(null, null);
         String returned = response.readEntity(String.class);
 
         checkDeletedAccountIntegrity(returned);

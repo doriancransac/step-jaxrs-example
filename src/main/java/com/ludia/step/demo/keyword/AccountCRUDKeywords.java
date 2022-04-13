@@ -71,4 +71,19 @@ public class AccountCRUDKeywords extends AbstractKeyword {
         output.add("isPresent", isPresent);
         output.add("success", true);
     }
+
+    @Keyword
+    public void ClearAccounts() throws Exception {
+        //No business input
+
+        //Technical properties wiring-- derived from the environment, not business input
+        String serviceUri = properties.get("serviceUri");
+
+        //Meat and potatoes of the keyword
+        int deletionCount = new AccountClient(serviceUri).clear();
+
+        //Output management
+        output.add("success", true);
+        output.add("deletionCount", deletionCount);
+    }
 }

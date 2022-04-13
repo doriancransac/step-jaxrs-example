@@ -2,9 +2,8 @@ package com.ludia.step.demo;
 
 import com.ludia.step.demo.glue.E2ETest;
 import com.ludia.step.demo.keyword.AccountCRUDKeywords;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -24,6 +23,13 @@ import java.util.Map;
 public class AccountCRUDKeywordsLocalTest {
     //Env properties are global to all the test methods in here
     private static String serviceUriRoot = "http://localhost:30001";
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        //Clear entire collection to get a clean slate prior to running tests
+        System.out.println("--> Clearing account collection");
+        runAccountClearKeyword();
+    }
 
     //Multi-service Test sequence (could/should be run as a "Plan")
     @Test
@@ -51,24 +57,36 @@ public class AccountCRUDKeywordsLocalTest {
         runAccountCreationKeywordTest(inputName, inputPassword, inputEmail);
     }
 
-    @Test //Individual Deletion keyword execution
-    @Category(E2ETest.class)
-    public void Ordered003AccountDeletionKeywordTest() throws Exception{
-        //Concrete test case input
-        String inputName = "dorian";
-        int expectedDeletionCount = 1;
-
-        runAccountDeletionKeywordTest(inputName, expectedDeletionCount);
-    }
-
     @Test //Individual Read keyword execution
     @Category(E2ETest.class)
     public void Ordered002_AccountReadingKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
+        //Variable test case validation input
         boolean isExpectedPresent = true;
 
         runAccountReadingKeywordTest(inputName, isExpectedPresent);
+    }
+
+    @Test //Individual Deletion keyword execution
+    @Category(E2ETest.class)
+    public void Ordered003AccountDeletionKeywordTest() throws Exception{
+        //Concrete test case input
+        String inputName = "dorian";
+        //Variable test case validation input
+        int expectedDeletionCount = 1;
+
+        runAccountDeletionKeywordTest(inputName, expectedDeletionCount);
+    }
+
+    @Test //Individual Clear keyword execution
+    @Category(E2ETest.class)
+    public void Ordered004AccountDeletionKeywordTest() throws Exception{
+        //This test case has no business input
+        //Variable test case validation input
+        int expectedDeletionCount = 0;
+
+        runAccountClearKeywordTest(expectedDeletionCount);
     }
 
     private void runAccountCreationKeywordTest(String inputName, String inputPassword, String inputEmail) throws Exception {
@@ -137,7 +155,32 @@ public class AccountCRUDKeywordsLocalTest {
         Assert.assertEquals(isExpectedPresent, payload.getBoolean("isPresent"));
     }
 
-    private JsonObject runKeyword(String keywordName, String keywordInput, Map<String, String> properties) throws Exception {
+    private void runAccountClearKeywordTest(int expectedDeletionCount) throws Exception {
+        JsonObject payload = runAccountClearKeyword();
+        Assert.assertEquals(expectedDeletionCount, payload.getInt("deletionCount"));
+    }
+
+    //This method does not check for a specific deletion count, can be used for technical calls
+    private static JsonObject runAccountClearKeyword() throws Exception {
+        //Step execution arguments
+        String keywordName = "ClearAccounts";
+        JsonObject keywordInput = Json.createObjectBuilder()
+                .build();
+
+        String servicePath = "/account/clear";
+        Map<String, String> properties = new HashMap<>();
+        // Endpoint config
+        properties.put("serviceUri", serviceUriRoot + servicePath);
+
+        //Actual execution
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+
+        //Basic validation
+        Assert.assertEquals(true, payload.getBoolean("success"));
+        return payload;
+    }
+
+    private static JsonObject runKeyword(String keywordName, String keywordInput, Map<String, String> properties) throws Exception {
         System.out.println("CALL_KEYWORD: KEYWORD=" + keywordName + "; INPUT="+keywordInput + "; PROPERTIES=" + properties);
         //Actual execution
         KeywordRunner.ExecutionContext ctx = KeywordRunner.getExecutionContext(properties, AccountCRUDKeywords.class);
@@ -149,7 +192,7 @@ public class AccountCRUDKeywordsLocalTest {
         return payload;
     }
 
-    private void printExceptionIfAny(Output<JsonObject> output) {
+    private static void printExceptionIfAny(Output<JsonObject> output) {
         List<Attachment> attachments = output.getAttachments();
         if(attachments != null) {
             attachments.forEach(attachment -> {
