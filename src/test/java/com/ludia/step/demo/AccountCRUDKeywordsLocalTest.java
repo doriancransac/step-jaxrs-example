@@ -28,7 +28,13 @@ public class AccountCRUDKeywordsLocalTest {
     public static void beforeClass() throws Exception {
         //Clear entire collection to get a clean slate prior to running tests
         System.out.println("--> Clearing account collection");
-        runAccountClearKeyword();
+        JsonObject payload = runAccountClearKeyword();
+        int deletionCount = payload.getInt("deletionCount");
+        if(deletionCount > 0){
+            System.err.println("WARNING: "+deletionCount+" existing account(s) have just been cleared.");
+        }else{
+            System.err.println("-->: Nothing to clear.");
+        }
     }
 
     //Multi-service Test sequence (could/should be run as a "Plan")
