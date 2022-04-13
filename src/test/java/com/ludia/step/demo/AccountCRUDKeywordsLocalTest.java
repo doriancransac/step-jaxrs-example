@@ -9,6 +9,7 @@ import step.functions.io.Output;
 import step.grid.io.Attachment;
 import step.handlers.javahandler.KeywordRunner;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.List;
@@ -62,19 +63,18 @@ public class AccountCRUDKeywordsLocalTest {
     private void runAccountCreationKeywordTest(String inputName, String inputPassword, String inputEmail) throws Exception {
         //Step execution arguments
         String keywordName = "CreateAccount";
-        String keywordInput =
-                "{" +
-                        "\"name\""     + ":" + "\""+ inputName +"\""         + "," +
-                        "\"password\"" + ":" + "\""+ inputPassword +"\""     + "," +
-                        "\"email\""    + ":" + "\""+ inputEmail +"\""        +
-                        "}";
+        JsonObject keywordInput = Json.createObjectBuilder()
+                .add("name", inputName)
+                .add("password", inputPassword)
+                .add("email", inputEmail)
+                .build();
 
         String servicePath = "/account/create";
         Map<String, String> properties = new HashMap<>();
         // Endpoint config
         properties.put("serviceUri", serviceUriRoot + servicePath);
 
-        JsonObject payload = runKeyword(keywordName, keywordInput, properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
@@ -87,10 +87,9 @@ public class AccountCRUDKeywordsLocalTest {
     private void runAccountDeletionKeywordTest(String inputName, int expectedDeletionCount) throws Exception {
         //Step execution arguments
         String keywordName = "DeleteAccount";
-        String keywordInput =
-                "{" +
-                        "\"name\""     + ":" + "\""+ inputName +"\""         +
-                        "}";
+        JsonObject keywordInput = Json.createObjectBuilder()
+                .add("name", inputName)
+                .build();
 
         String servicePath = "/account/deleteByName";
         Map<String, String> properties = new HashMap<>();
@@ -98,7 +97,7 @@ public class AccountCRUDKeywordsLocalTest {
         properties.put("serviceUri", serviceUriRoot + servicePath);
 
         //Actual execution
-        JsonObject payload = runKeyword(keywordName, keywordInput, properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
@@ -109,10 +108,9 @@ public class AccountCRUDKeywordsLocalTest {
     private void runAccountReadingKeywordTest(String inputName, boolean isExpectedPresent) throws Exception {
         //Step execution arguments
         String keywordName = "ReadAccount";
-        String keywordInput =
-                "{" +
-                        "\"name\""     + ":" + "\""+ inputName +"\""         +
-                        "}";
+        JsonObject keywordInput = Json.createObjectBuilder()
+                .add("name", inputName)
+                .build();
 
         String servicePath = "/account/readByName";
         Map<String, String> properties = new HashMap<>();
@@ -120,7 +118,7 @@ public class AccountCRUDKeywordsLocalTest {
         properties.put("serviceUri", serviceUriRoot + servicePath);
 
         //Actual execution
-        JsonObject payload = runKeyword(keywordName, keywordInput, properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
