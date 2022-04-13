@@ -27,6 +27,7 @@ public class AccountCRUDKeywords extends AbstractKeyword {
             output.add("retName", account.getName());
             output.add("retPassword", account.getPassword());
             output.add("retEmail", account.getEmail());
+            output.add("retId", account.getId().toHexString());
         }
         output.add("success", successStatus);
     }
@@ -43,6 +44,30 @@ public class AccountCRUDKeywords extends AbstractKeyword {
         new AccountClient(serviceUri).deleteByName(name);
 
         //Output management -- nothing to do here
+        output.add("success", true);
+    }
+
+    @Keyword
+    public void ReadAccount() throws Exception {
+        //Business input wiring
+        String name = input.getString("name");
+
+        //Technical properties wiring-- derived from the environment, not business input
+        String serviceUri = properties.get("serviceUri");
+
+        //Meat and potatoes of the keyword
+        Account account = new AccountClient(serviceUri).readByName(name);
+
+        boolean isPresent = false;
+        //Output management -- for post validation (equivalent of assertions, outside of keyword)
+        if(account != null) {
+            isPresent = true;
+            output.add("retName", account.getName());
+            output.add("retPassword", account.getPassword());
+            output.add("retEmail", account.getEmail());
+            output.add("retId", account.getId().toHexString());
+        }
+        output.add("isPresent", isPresent);
         output.add("success", true);
     }
 }

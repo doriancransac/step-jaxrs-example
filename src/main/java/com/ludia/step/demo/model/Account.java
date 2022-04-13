@@ -1,11 +1,13 @@
 package com.ludia.step.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.bson.types.ObjectId;
 
 public class Account {
-
     @JsonProperty("_id")
+    @JsonSerialize(using = ToStringSerializer.class)
     public ObjectId id;
 
     public String name;
