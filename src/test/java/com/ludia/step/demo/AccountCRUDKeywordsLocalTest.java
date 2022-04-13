@@ -1,9 +1,14 @@
 package com.ludia.step.demo;
 
+import com.ludia.step.demo.glue.E2ETest;
 import com.ludia.step.demo.keyword.AccountCRUDKeywords;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runners.MethodSorters;
 import step.core.reports.Error;
 import step.functions.io.Output;
 import step.grid.io.Attachment;
@@ -15,12 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AccountCRUDKeywordsLocalTest {
     //Env properties are global to all the test methods in here
     private static String serviceUriRoot = "http://localhost:30001";
 
-    @Test //Full keyword sequence (could/should be run as a "Plan")
-    public void FullAccountCycleKeywordTest() throws Exception{
+    //Multi-service Test sequence (could/should be run as a "Plan")
+    @Test
+    @Category(E2ETest.class)
+    public void Ordered000_FullAccountCycleKeywordTest() throws Exception{
         String inputName = "dorian";
         String inputPassword = "1234";
         String inputEmail = "dorian@aol.com";
@@ -32,8 +40,9 @@ public class AccountCRUDKeywordsLocalTest {
         runAccountDeletionKeywordTest(inputName, 0);
     }
 
-    //@Test //Individual keyword execution
-    public void AccountCreationKeywordTest() throws Exception{
+    @Test //Individual Creation keyword execution
+    @Category(E2ETest.class)
+    public void Ordered001_AccountCreationKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
         String inputPassword = "1234";
@@ -42,8 +51,9 @@ public class AccountCRUDKeywordsLocalTest {
         runAccountCreationKeywordTest(inputName, inputPassword, inputEmail);
     }
 
-    //@Test //Individual keyword execution
-    public void AccountDeletionKeywordTest() throws Exception{
+    @Test //Individual Deletion keyword execution
+    @Category(E2ETest.class)
+    public void Ordered003AccountDeletionKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
         int expectedDeletionCount = 1;
@@ -51,8 +61,9 @@ public class AccountCRUDKeywordsLocalTest {
         runAccountDeletionKeywordTest(inputName, expectedDeletionCount);
     }
 
-    //@Test //Individual keyword execution
-    public void AccountReadingKeywordTest() throws Exception{
+    @Test //Individual Read keyword execution
+    @Category(E2ETest.class)
+    public void Ordered002_AccountReadingKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
         boolean isExpectedPresent = true;
