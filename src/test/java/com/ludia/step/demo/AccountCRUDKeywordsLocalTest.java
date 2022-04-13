@@ -26,11 +26,12 @@ public class AccountCRUDKeywordsLocalTest {
 
         runAccountCreationKeywordTest(inputName, inputPassword, inputEmail);
         runAccountReadingKeywordTest(inputName, true);
-        runAccountDeletionKeywordTest(inputName);
+        runAccountDeletionKeywordTest(inputName, 1);
         runAccountReadingKeywordTest(inputName, false);
+        runAccountDeletionKeywordTest(inputName, 0);
     }
 
-    @Test //Individual keyword execution
+    //@Test //Individual keyword execution
     public void AccountCreationKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
@@ -40,12 +41,13 @@ public class AccountCRUDKeywordsLocalTest {
         runAccountCreationKeywordTest(inputName, inputPassword, inputEmail);
     }
 
-    @Test //Individual keyword execution
+    //@Test //Individual keyword execution
     public void AccountDeletionKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
+        int expectedDeletionCount = 1;
 
-        runAccountDeletionKeywordTest(inputName);
+        runAccountDeletionKeywordTest(inputName, expectedDeletionCount);
     }
 
     //@Test //Individual keyword execution
@@ -82,7 +84,7 @@ public class AccountCRUDKeywordsLocalTest {
         Assert.assertEquals(inputEmail, payload.getString("retEmail"));
     }
 
-    private void runAccountDeletionKeywordTest(String inputName) throws Exception {
+    private void runAccountDeletionKeywordTest(String inputName, int expectedDeletionCount) throws Exception {
         //Step execution arguments
         String keywordName = "DeleteAccount";
         String keywordInput =
@@ -100,6 +102,7 @@ public class AccountCRUDKeywordsLocalTest {
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
+        Assert.assertEquals(expectedDeletionCount, payload.getInt("deletionCount"));
     }
 
 
@@ -126,13 +129,14 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     private JsonObject runKeyword(String keywordName, String keywordInput, Map<String, String> properties) throws Exception {
+        System.out.println("CALL_KEYWORD: KEYWORD=" + keywordName + "; INPUT="+keywordInput + "; PROPERTIES=" + properties);
         //Actual execution
         KeywordRunner.ExecutionContext ctx = KeywordRunner.getExecutionContext(properties, AccountCRUDKeywords.class);
         Output<JsonObject> output = ctx.run(keywordName, keywordInput);
         printExceptionIfAny(output);
         //Debug print outs & output assertions
         JsonObject payload = output.getPayload();
-        System.out.println(payload);
+        System.out.println("RESPONSE:" + payload);
         return payload;
     }
 

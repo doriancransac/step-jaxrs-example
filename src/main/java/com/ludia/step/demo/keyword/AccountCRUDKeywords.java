@@ -41,10 +41,11 @@ public class AccountCRUDKeywords extends AbstractKeyword {
         String serviceUri = properties.get("serviceUri");
 
         //Meat and potatoes of the keyword
-        new AccountClient(serviceUri).deleteByName(name);
+        int deletionCount = new AccountClient(serviceUri).deleteByName(name);
 
-        //Output management -- nothing to do here
+        //Output management
         output.add("success", true);
+        output.add("deletionCount", deletionCount);
     }
 
     @Keyword

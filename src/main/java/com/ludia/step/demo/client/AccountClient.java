@@ -38,13 +38,20 @@ public class AccountClient {
         return returned;
     }
 
-    public void deleteByName(String name) throws Exception {
+    public int deleteByName(String name) throws Exception {
         //Only name matters here
         Account account = new Account(name, null, null);
         Response response = postEntity(account);
         String returned = response.readEntity(String.class);
 
         checkDeletedAccountIntegrity(returned);
+
+        return extractDeletionCount(returned);
+    }
+
+    private int extractDeletionCount(String returned) {
+        String count = returned.split(" deletion")[0];
+        return Integer.parseInt(count.trim());
     }
 
     private void checkCreatedAccountIntegrity(Account input, Account output) throws Exception {
@@ -54,7 +61,7 @@ public class AccountClient {
     }
 
     private void checkDeletedAccountIntegrity(String returned) throws Exception {
-        if(returned == null || !returned.contains("1 deletion")){
+        if(returned == null || !returned.contains(" deletion(s)")){
             throw new Exception("Inconsistent deletion state, message was:" + returned);
         }
     }
