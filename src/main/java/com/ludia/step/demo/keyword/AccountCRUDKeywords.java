@@ -33,7 +33,7 @@ public class AccountCRUDKeywords extends AbstractKeyword {
     }
 
     @Keyword
-    public void DeleteAccount() throws Exception {
+    public void DeleteAccountByName() throws Exception {
         //Business input wiring
         String name = input.getString("name");
 
@@ -49,7 +49,23 @@ public class AccountCRUDKeywords extends AbstractKeyword {
     }
 
     @Keyword
-    public void ReadAccount() throws Exception {
+    public void DeleteAccountById() throws Exception {
+        //Business input wiring
+        String id = input.getString("id");
+
+        //Technical properties wiring-- derived from the environment, not business input
+        String serviceUri = properties.get("serviceUri");
+
+        //Meat and potatoes of the keyword
+        int deletionCount = new AccountClient(serviceUri).deleteById(id);
+
+        //Output management
+        output.add("success", true);
+        output.add("deletionCount", deletionCount);
+    }
+
+    @Keyword
+    public void ReadAccountByName() throws Exception {
         //Business input wiring
         String name = input.getString("name");
 

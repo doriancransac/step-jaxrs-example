@@ -48,6 +48,18 @@ public class AccountClient {
         return extractDeletionCount(returned);
     }
 
+    public int deleteById(String id) throws Exception {
+        //TODO: make delete calls more consistent: deleteByName posts the name
+        // but this service requires the id to be sent via QueryParam
+        Response response = postEntity(null, this.serviceUri + "/" + id);
+        String returned = response.readEntity(String.class);
+
+        checkDeletedAccountIntegrity(returned);
+
+        return extractDeletionCount(returned);
+    }
+
+
     public int clear() throws Exception {
         Response response =  getEntity(null, null);
         String returned = response.readEntity(String.class);
@@ -81,9 +93,17 @@ public class AccountClient {
         }*/
     }
 
-    private Response postEntity(Object entity) throws Exception {
-        WebTarget createWebTarget = client.target(this.serviceUri);
+    private Response postEntity(Object entity, String target) throws Exception {
+        WebTarget webTarget = client.target(target);
+        return postEntity(entity, webTarget);
+    }
 
+    private Response postEntity(Object entity) throws Exception {
+        WebTarget webTarget = client.target(this.serviceUri);
+        return postEntity(entity, webTarget);
+    }
+
+    private Response postEntity(Object entity, WebTarget createWebTarget) throws Exception {
         Invocation.Builder createInvocationBuilder =
                 createWebTarget.request(MediaType.APPLICATION_JSON);
         //invocationBuilder.header("some-header", "true");

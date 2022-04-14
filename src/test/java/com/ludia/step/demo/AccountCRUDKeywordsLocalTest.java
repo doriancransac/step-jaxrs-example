@@ -40,16 +40,29 @@ public class AccountCRUDKeywordsLocalTest {
 
     //Multi-service Test sequence (could/should be run as a "Plan")
     @Test
-    public void Ordered000_FullAccountCycleKeywordTest() throws Exception{
+    public void Ordered000_NameBasedCycleKeywordTest() throws Exception{
         String inputName = "dorian";
         String inputPassword = "1234";
         String inputEmail = "dorian@aol.com";
 
         runAccountCreationKeywordTest(inputName, inputPassword, inputEmail);
-        runAccountReadingKeywordTest(inputName, true);
-        runAccountDeletionKeywordTest(inputName, 1);
-        runAccountReadingKeywordTest(inputName, false);
-        runAccountDeletionKeywordTest(inputName, 0);
+        runAccountReadByNameKeywordTest(inputName, true);
+        runAccountDeletionByNameKeywordTest(inputName, 1);
+        runAccountReadByNameKeywordTest(inputName, false);
+        runAccountDeletionByNameKeywordTest(inputName, 0);
+    }
+
+    @Test
+    public void Ordered005_IdBasedCycleKeywordTest() throws Exception{
+        String inputName = "dorian";
+        String inputPassword = "1234";
+        String inputEmail = "dorian@aol.com";
+
+        String id = runAccountCreationKeywordTest(inputName, inputPassword, inputEmail);
+        runAccountReadByNameKeywordTest(inputName, true);
+        runAccountDeletionByIdKeywordTest(id, 1);
+        runAccountReadByNameKeywordTest(inputName, false);
+        runAccountDeletionByNameKeywordTest(inputName, 0);
     }
 
     @Test //Individual Creation keyword execution
@@ -69,7 +82,7 @@ public class AccountCRUDKeywordsLocalTest {
         //Variable test case validation input
         boolean isExpectedPresent = true;
 
-        runAccountReadingKeywordTest(inputName, isExpectedPresent);
+        runAccountReadByNameKeywordTest(inputName, isExpectedPresent);
     }
 
     @Test //Individual Deletion keyword execution
@@ -79,7 +92,7 @@ public class AccountCRUDKeywordsLocalTest {
         //Variable test case validation input
         int expectedDeletionCount = 1;
 
-        runAccountDeletionKeywordTest(inputName, expectedDeletionCount);
+        runAccountDeletionByNameKeywordTest(inputName, expectedDeletionCount);
     }
 
     @Test //Individual Clear keyword execution
@@ -91,7 +104,7 @@ public class AccountCRUDKeywordsLocalTest {
         runAccountClearKeywordTest(expectedDeletionCount);
     }
 
-    private void runAccountCreationKeywordTest(String inputName, String inputPassword, String inputEmail) throws Exception {
+    private String runAccountCreationKeywordTest(String inputName, String inputPassword, String inputEmail) throws Exception {
         //Step execution arguments
         String keywordName = "CreateAccount";
         JsonObject keywordInput = Json.createObjectBuilder()
@@ -113,11 +126,13 @@ public class AccountCRUDKeywordsLocalTest {
         Assert.assertEquals(inputName, payload.getString("retName"));
         Assert.assertEquals("<redacted>", payload.getString("retPassword"));
         Assert.assertEquals(inputEmail, payload.getString("retEmail"));
+
+        return payload.getString("retId");
     }
 
-    private void runAccountDeletionKeywordTest(String inputName, int expectedDeletionCount) throws Exception {
+    private void runAccountDeletionByNameKeywordTest(String inputName, int expectedDeletionCount) throws Exception {
         //Step execution arguments
-        String keywordName = "DeleteAccount";
+        String keywordName = "DeleteAccountByName";
         JsonObject keywordInput = Json.createObjectBuilder()
                 .add("name", inputName)
                 .build();
@@ -135,10 +150,29 @@ public class AccountCRUDKeywordsLocalTest {
         Assert.assertEquals(expectedDeletionCount, payload.getInt("deletionCount"));
     }
 
-
-    private void runAccountReadingKeywordTest(String inputName, boolean isExpectedPresent) throws Exception {
+    private void runAccountDeletionByIdKeywordTest(String id, int expectedDeletionCount) throws Exception {
         //Step execution arguments
-        String keywordName = "ReadAccount";
+        String keywordName = "DeleteAccountById";
+        JsonObject keywordInput = Json.createObjectBuilder()
+                .add("id", id)
+                .build();
+
+        String servicePath = "/account/deleteById";
+        Map<String, String> properties = new HashMap<>();
+        // Endpoint config
+        properties.put("serviceUri", serviceUriRoot + servicePath);
+
+        //Actual execution
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+
+        //Basic validation
+        Assert.assertEquals(true, payload.getBoolean("success"));
+        Assert.assertEquals(expectedDeletionCount, payload.getInt("deletionCount"));
+    }
+
+    private void runAccountReadByNameKeywordTest(String inputName, boolean isExpectedPresent) throws Exception {
+        //Step execution arguments
+        String keywordName = "ReadAccountByName";
         JsonObject keywordInput = Json.createObjectBuilder()
                 .add("name", inputName)
                 .build();
