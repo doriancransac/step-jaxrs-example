@@ -113,12 +113,7 @@ public class AccountCRUDKeywordsLocalTest {
                 .add("email", inputEmail)
                 .build();
 
-        String servicePath = "/account/create";
-        Map<String, String> properties = new HashMap<>();
-        // Endpoint config
-        properties.put("serviceUri", serviceUriRoot + servicePath);
-
-        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString());
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
@@ -138,12 +133,8 @@ public class AccountCRUDKeywordsLocalTest {
                 .build();
 
         String servicePath = "/account/deleteByName";
-        Map<String, String> properties = new HashMap<>();
-        // Endpoint config
-        properties.put("serviceUri", serviceUriRoot + servicePath);
-
         //Actual execution
-        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString());
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
@@ -157,13 +148,8 @@ public class AccountCRUDKeywordsLocalTest {
                 .add("id", id)
                 .build();
 
-        String servicePath = "/account/deleteById";
-        Map<String, String> properties = new HashMap<>();
-        // Endpoint config
-        properties.put("serviceUri", serviceUriRoot + servicePath);
-
         //Actual execution
-        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString());
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
@@ -177,13 +163,8 @@ public class AccountCRUDKeywordsLocalTest {
                 .add("name", inputName)
                 .build();
 
-        String servicePath = "/account/readByName";
-        Map<String, String> properties = new HashMap<>();
-        // Endpoint config
-        properties.put("serviceUri", serviceUriRoot + servicePath);
-
         //Actual execution
-        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString());
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
@@ -203,20 +184,20 @@ public class AccountCRUDKeywordsLocalTest {
         JsonObject keywordInput = Json.createObjectBuilder()
                 .build();
 
-        String servicePath = "/account/clear";
-        Map<String, String> properties = new HashMap<>();
-        // Endpoint config
-        properties.put("serviceUri", serviceUriRoot + servicePath);
-
         //Actual execution
-        JsonObject payload = runKeyword(keywordName, keywordInput.toString(), properties);
+        JsonObject payload = runKeyword(keywordName, keywordInput.toString());
 
         //Basic validation
         Assert.assertEquals(true, payload.getBoolean("success"));
         return payload;
     }
 
-    private static JsonObject runKeyword(String keywordName, String keywordInput, Map<String, String> properties) throws Exception {
+    private static JsonObject runKeyword(String keywordName, String keywordInput) throws Exception {
+
+        Map<String, String> properties = new HashMap<>();
+        // Endpoint config
+        properties.put("serviceUri", serviceUriRoot);
+
         System.out.println("CALL_KEYWORD: KEYWORD=" + keywordName + "; INPUT="+keywordInput + "; PROPERTIES=" + properties);
         //Actual execution
         KeywordRunner.ExecutionContext ctx = KeywordRunner.getExecutionContext(properties, AccountCRUDKeywords.class);

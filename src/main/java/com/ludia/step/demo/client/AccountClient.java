@@ -12,6 +12,14 @@ public class AccountClient {
     private final Client client;
     private final String serviceUri;
 
+    private static final String accountPath = "/account";
+
+    private static final String createPath = "/create";
+    private static final String deleteByNamePath = "/deleteByName";
+    private static final String deleteByIdPath = "/deleteById";
+    private static final String readByNamePath = "/readByName";
+    private static final String clearPath = "/clear";
+
     public AccountClient(String serviceUri) {
         this.client = ClientBuilder.newClient();
         this.serviceUri = serviceUri;
@@ -19,7 +27,7 @@ public class AccountClient {
 
     public Account create(String name, String password, String email) throws Exception {
         Account account = new Account(name, password, email);
-        Response response = postEntity(account);
+        Response response = postEntity(account, accountPath + createPath);
         Account returned = response.readEntity(Account.class);
 
         checkCreatedAccountIntegrity(account, returned);
@@ -31,7 +39,7 @@ public class AccountClient {
         //The name argument is passed as a PathParam, not a query param
         //Map<String, String> queryParams = new HashMap<>();
         //queryParams.put("name", name);
-        Account returned = getEntity(null, name).readEntity(Account.class);
+        Account returned = getEntity(null, name, accountPath + readByNamePath).readEntity(Account.class);
 
         checkReadAccountIntegrity(returned);
         return returned;
@@ -40,7 +48,7 @@ public class AccountClient {
     public int deleteByName(String name) throws Exception {
         //Only name matters here
         Account account = new Account(name, null, null);
-        Response response = postEntity(account);
+        Response response = postEntity(account, accountPath + deleteByNamePath);
         String returned = response.readEntity(String.class);
 
         checkDeletedAccountIntegrity(returned);
@@ -51,7 +59,7 @@ public class AccountClient {
     public int deleteById(String id) throws Exception {
         //TODO: make delete calls more consistent: deleteByName posts the name
         // but this service requires the id to be sent via QueryParam
-        Response response = postEntity(null, this.serviceUri + "/" + id);
+        Response response = postEntity(null, accountPath + deleteByIdPath + "/" + id);
         String returned = response.readEntity(String.class);
 
         checkDeletedAccountIntegrity(returned);
@@ -61,7 +69,7 @@ public class AccountClient {
 
 
     public int clear() throws Exception {
-        Response response =  getEntity(null, null);
+        Response response =  getEntity(null, null, accountPath + clearPath);
         String returned = response.readEntity(String.class);
 
         checkDeletedAccountIntegrity(returned);
@@ -93,13 +101,13 @@ public class AccountClient {
         }*/
     }
 
-    private Response postEntity(Object entity, String target) throws Exception {
+    private Response postEntity(Object entity, String target, String servicePath) throws Exception {
         WebTarget webTarget = client.target(target);
         return postEntity(entity, webTarget);
     }
 
-    private Response postEntity(Object entity) throws Exception {
-        WebTarget webTarget = client.target(this.serviceUri);
+    private Response postEntity(Object entity, String servicePath) throws Exception {
+        WebTarget webTarget = client.target(this.serviceUri + servicePath);
         return postEntity(entity, webTarget);
     }
 
@@ -113,8 +121,8 @@ public class AccountClient {
         return response;
     }
 
-    private Response getEntity(Map<String, String> queryParams, String pathParam) throws Exception {
-        String target = buildUriWithParams(this.serviceUri, queryParams, pathParam);
+    private Response getEntity(Map<String, String> queryParams, String pathParam, String servicePath) throws Exception {
+        String target = buildUriWithParams(this.serviceUri + servicePath, queryParams, pathParam);
 
         WebTarget webTarget = client.target(target);
 
