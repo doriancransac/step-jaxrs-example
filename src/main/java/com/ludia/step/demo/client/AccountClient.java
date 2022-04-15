@@ -158,8 +158,14 @@ public class AccountClient {
     private void handlePotentialError(Response response) throws Exception {
         if (response.getStatus() != 200) {
             int status = response.getStatus();
-            System.err.println("Response Code: " + status + ", entity=" + response.readEntity(String.class));
-            throw new Exception("Erroneous service response, code:" + status) ;
+            String entity = null;
+            try {
+                entity = response.readEntity(String.class);
+            }catch (Exception e){
+                entity = e.getClass().getSimpleName() + " : " +e.getMessage();
+            }
+            System.err.println("Response Code: " + status + ", entity=" + entity);
+            throw new Exception("Erroneous service response, code:" + status + ", entity=" + entity) ;
         }
     }
 }
