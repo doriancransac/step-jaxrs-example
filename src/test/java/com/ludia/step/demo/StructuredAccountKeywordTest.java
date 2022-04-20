@@ -19,9 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * A naive attempt at building an E2E test plan based off of the keywords
+ */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Category(E2ETest.class)
-public class AccountCRUDKeywordsLocalTest {
+public class StructuredAccountKeywordTest {
     //Env properties are global to all the test methods in here
     private static String serviceUriRoot = "http://localhost:30001";
 
@@ -86,7 +89,7 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     @Test //Individual Deletion keyword execution
-    public void Ordered003AccountDeletionKeywordTest() throws Exception{
+    public void Ordered003AccountDeletionByNameKeywordTest() throws Exception{
         //Concrete test case input
         String inputName = "dorian";
         //Variable test case validation input
@@ -96,7 +99,7 @@ public class AccountCRUDKeywordsLocalTest {
     }
 
     @Test //Individual Clear keyword execution
-    public void Ordered004AccountDeletionKeywordTest() throws Exception{
+    public void Ordered004AccountClearKeywordTest() throws Exception{
         //This test case has no business input
         //Variable test case validation input
         int expectedDeletionCount = 0;
@@ -132,7 +135,6 @@ public class AccountCRUDKeywordsLocalTest {
                 .add("name", inputName)
                 .build();
 
-        String servicePath = "/account/deleteByName";
         //Actual execution
         JsonObject payload = runKeyword(keywordName, keywordInput.toString());
 
