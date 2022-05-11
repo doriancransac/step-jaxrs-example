@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 /*
- * A naive attempt at building an E2E test plan based off of the keywords
+ * A recreation of traditional, standalone Unit Tests on top of they Keyword API
+ * instead of making direct calls to the client (not particularly useful)
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Category(E2ETest.class)
